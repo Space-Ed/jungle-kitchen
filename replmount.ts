@@ -15,22 +15,19 @@ export function mount(domain:Domain, rawapp){
         }
     }
 
-    console.log(requestable)
-
     function myEval(cmd, context, filename, callback) {
         let parsed = cmd.match(/^([^~]*)~([^~]*)$/)
 
         if(parsed === null){
-            callback(null, 'Sorry I cannot understand that')
+            callback(null, 'Sorry, you must use a tilde')
             return
-        }else{
-            console.log(`${parsed[1]}~${parsed[2]}`)
         }
 
         let contact = requestable[parsed[1]]
 
-        if(contact === null){
-            callback(null, 'Sorry I cannot understand that')
+        if(contact === undefined){
+            let valid = Object.keys(requestable).join(', ')
+            callback(null, `Sorry, I cannot understand that, the only valid commands are ${valid}`)
             return
         }
 
@@ -39,7 +36,7 @@ export function mount(domain:Domain, rawapp){
         callback(null, result);
     }
 
-    repl.start({ prompt: 'What will you order sir? ', eval: myEval });
+    repl.start({ prompt: 'What will you order sir/madam? ', eval: myEval });
 
     return app
 }

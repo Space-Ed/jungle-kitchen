@@ -12,25 +12,22 @@ function mount(domain, rawapp) {
             requestable[token] = contacts[token];
         }
     }
-    console.log(requestable);
     function myEval(cmd, context, filename, callback) {
         var parsed = cmd.match(/^([^~]*)~([^~]*)$/);
         if (parsed === null) {
-            callback(null, 'Sorry I cannot understand that');
+            callback(null, 'Sorry, you must use a tilde');
             return;
         }
-        else {
-            console.log(parsed[1] + "~" + parsed[2]);
-        }
         var contact = requestable[parsed[1]];
-        if (contact === null) {
-            callback(null, 'Sorry I cannot understand that');
+        if (contact === undefined) {
+            var valid = Object.keys(requestable).join(', ');
+            callback(null, "Sorry, I cannot understand that, the only valid commands are " + valid);
             return;
         }
         var result = contact.put(parsed[2]);
         callback(null, result);
     }
-    repl.start({ prompt: 'What will you order sir? ', eval: myEval });
+    repl.start({ prompt: 'What will you order sir/madam? ', eval: myEval });
     return app;
 }
 exports.mount = mount;
